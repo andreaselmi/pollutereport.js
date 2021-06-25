@@ -5,7 +5,9 @@ const app = express();
 const users = require("./routes/users");
 const auth = require("./routes/auth");
 require("./db")();
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
 app.use(helmet());
 app.use("/users", users);
