@@ -23,6 +23,8 @@ router.post("/", async (req, res) => {
   if (user) return res.status(400).send("User already exist");
 
   user = new User({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     email: req.body.email,
     password: req.body.password,
     isAdmin: req.body.isAdmin,
