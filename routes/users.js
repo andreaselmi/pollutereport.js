@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const auth = require("../middlewares/auth");
 
 const { User, userValidator } = require("../models/User");
 
@@ -40,6 +41,23 @@ router.post("/", async (req, res) => {
 });
 
 //modify user
+router.put("/:id", auth, async (req, res) => {
+  if (req.params.id !== req.user._id) {
+    return res.status(401).send("You can modify only your account");
+  }
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      $set: req.body,
+    });
+    res.status(200).send({
+      email: user.email,
+      id: user._id,
+    });
+  } catch (error) {
+    //TODO
+    res.status(500).send("Try again");
+  }
+});
 
 //delete a user by id
 //TODO
