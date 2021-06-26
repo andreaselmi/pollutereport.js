@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const router = require("express").Router();
 const auth = require("../middlewares/auth");
+const validateObjId = require("../middlewares/validateObjId");
 
 const { Post, postValidator } = require("../models/Post");
 const { User } = require("../models/User");
@@ -45,10 +46,7 @@ router.post("/", auth, async (req, res) => {
 });
 
 //Delete post
-router.delete("/:id", auth, async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Your id is not valid");
-
+router.delete("/:id", [auth, validateObjId], async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (!post) return res.status(404).send("Post not found");
 
@@ -67,5 +65,6 @@ router.delete("/:id", auth, async (req, res) => {
 });
 
 //Update post
+router.put("/:id", [auth, validateObjId], async (req, res) => {});
 
 module.exports = router;
