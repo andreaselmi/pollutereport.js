@@ -10,7 +10,7 @@ const userValidator = Joi.object({
   isAdmin: Joi.boolean(),
 });
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false,
+  },
+  posts: {
+    type: Array,
+    default: [],
   },
 });
 
