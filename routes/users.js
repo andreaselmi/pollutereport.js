@@ -44,9 +44,15 @@ router.post("/", async (req, res) => {
 
 //modify user
 router.put("/:id", auth, async (req, res) => {
-  if (req.params.id !== req.user._id) {
-    return res.status(401).send("You can modify only your account");
+  const { error } = userValidator.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  if (req.params.id !== req.user._id && !user.isAdmin) {
+    return res
+      .status(401)
+      .send("You are not authorized to modify this account");
   }
+
   try {
     const user = await User.findByIdAndUpdate(req.user._id, {
       $set: req.body,

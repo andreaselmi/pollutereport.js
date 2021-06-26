@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const router = require("express").Router();
 const auth = require("../middlewares/auth");
 const validateObjId = require("../middlewares/validateObjId");
@@ -20,6 +19,7 @@ router.get("/", async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const { error } = postValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
+
   const user = await User.findById(req.user._id);
 
   let post = new Post({
@@ -47,13 +47,13 @@ router.post("/", auth, async (req, res) => {
 
 //Delete post
 router.delete("/:id", [auth, validateObjId], async (req, res) => {
+  // TODO error handling all await status
   const post = await Post.findById(req.params.id);
   if (!post) return res.status(404).send("Post not found");
 
   //TODO migliorare
-
-  if (post.author !== req.user._id && !req.user.isAdmin)
-    return res.status(401).send("You can delete only your post");
+  if (String(post.author) !== String(req.user._id) && !req.user.isAdmin)
+    return res.status(401).send("You are not authorized to delete this post");
 
   try {
     await post.remove();
@@ -65,6 +65,28 @@ router.delete("/:id", [auth, validateObjId], async (req, res) => {
 });
 
 //Update post
-router.put("/:id", [auth, validateObjId], async (req, res) => {});
+router.put("/:id", [auth, validateObjId], async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) return res.status(404).send("Post not found");
+
+  // TODO migliorare
+  if (String(post.author) !== String(req.user._id)) {
+    return res.status(401).send("You are not authorized to modify this post");
+  }
+
+  const { error } = postValidator.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    await post.updateOne({
+      $set: req.body,
+    });
+
+    res.status(200).send(post);
+  } catch (error) {
+    //TODO
+    res.status(500).send("Try again");
+  }
+});
 
 module.exports = router;
