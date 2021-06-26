@@ -44,7 +44,10 @@ const postSchema = new mongoose.Schema({
         min: 2,
         max: 50,
       },
-      position: String,
+      position: {
+        type: String,
+        default: null,
+      },
     }),
     required: true,
   },
@@ -52,6 +55,11 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
     max: 255,
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
 });
 
