@@ -1,6 +1,8 @@
+const fs = require("fs");
 const router = require("express").Router();
 const auth = require("../middleware/auth");
 const validateObjId = require("../middleware/validateObjId");
+const upload = require("../middleware/uploadImg");
 
 const { Post, postValidator } = require("../models/Post");
 const { User } = require("../models/User");
@@ -16,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 //create new post
-router.post("/", auth, async (req, res) => {
+router.post("/", [auth, upload.single("image")], async (req, res) => {
   const { error } = postValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -31,8 +33,8 @@ router.post("/", auth, async (req, res) => {
       street: req.body.address.street,
       position: req.body.address.position,
     },
-    image: req.body.image,
     author: user._id,
+    image: req.body.image,
   });
 
   try {
