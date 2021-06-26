@@ -37,7 +37,7 @@ router.post("/", auth, async (req, res) => {
 
   try {
     post = await post.save();
-    await user.updateOne({ $push: { posts: post._id } });
+    await user.updateOne({ $push: { posts: { _id: post._id } } });
     res.status(200).send(post);
   } catch (error) {
     //TODO error handler
@@ -56,10 +56,14 @@ router.delete("/:id", [auth, validateObjId], async (req, res) => {
     return res.status(401).send("You are not authorized to delete this post");
 
   try {
+    await User.findByIdAndUpdate(post.author, {
+      $pull: { posts: { _id: post._id } },
+    });
     await post.remove();
     res.send(post);
   } catch (error) {
     //TODO error handler
+    console.log(error);
     res.status(500).send("Something goes wrong");
   }
 });
