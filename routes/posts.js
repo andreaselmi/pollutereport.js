@@ -7,12 +7,25 @@ const { Post, postValidator } = require("../models/Post");
 const { User } = require("../models/User");
 
 router.get("/", async (req, res) => {
-  try {
-    const posts = await Post.find().populate("author");
-    res.send(posts);
-  } catch (error) {
-    //TODO error handler
-    res.status(500).send("Something goes wrong");
+  if (Object.keys(req.query).length === 0) {
+    try {
+      const posts = await Post.find().populate("author");
+      res.send(posts);
+    } catch (error) {
+      //TODO error handler
+      res.status(500).send("Something goes wrong");
+    }
+  } else if (req.query.city) {
+    //TODO migliorare la query con maiuscole e minuscole
+    const posts = await Post.find({ "address.city": req.query.city });
+
+    if (posts.length === 0) {
+      return res.status(404).send("There are no reports in this city");
+    }
+
+    res.status(200).send(posts);
+  } else {
+    res.status(400).send("You can only search with the name of a city");
   }
 });
 
