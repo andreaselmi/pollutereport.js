@@ -1,4 +1,3 @@
-const fs = require("fs");
 const router = require("express").Router();
 const auth = require("../middleware/auth");
 const validateObjId = require("../middleware/validateObjId");
@@ -22,6 +21,8 @@ router.post("/", [auth, upload.single("image")], async (req, res) => {
   const { error } = postValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  if (!req.file) return res.status(400).send("Your post must have an image");
+
   const user = await User.findById(req.user._id);
 
   let post = new Post({
@@ -34,7 +35,7 @@ router.post("/", [auth, upload.single("image")], async (req, res) => {
       position: req.body.address.position,
     },
     author: user._id,
-    image: req.body.image,
+    image: req.file.path,
   });
 
   try {
@@ -44,6 +45,7 @@ router.post("/", [auth, upload.single("image")], async (req, res) => {
   } catch (error) {
     //TODO error handler
     res.status(500).send("Something goes wrong");
+    console.log(error);
   }
 });
 

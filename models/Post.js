@@ -4,7 +4,6 @@ const Joi = require("joi");
 const postValidator = Joi.object({
   title: Joi.string().required().min(2).max(50),
   description: Joi.string().max(255),
-  image: Joi.string().required().max(50),
   address: {
     city: Joi.string().required().min(2).max(50),
     country: Joi.string().required().min(2).max(50),
