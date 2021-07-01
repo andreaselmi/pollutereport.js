@@ -35,10 +35,13 @@ router.post("/", async (req, res) => {
 
   await user.save();
   const token = user.generateAuthToken();
+  const refreshToken = user.generateRefreshToken();
 
-  res.status(200).header("x-auth-token", token).send({
+  res.status(200).send({
     email: user.email,
     id: user._id,
+    token,
+    refreshToken,
   });
 });
 
