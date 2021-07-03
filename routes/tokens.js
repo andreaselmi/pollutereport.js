@@ -5,9 +5,10 @@ const { User } = require("../models/User");
 const Token = require("../models/Token");
 
 router.post("/", (req, res) => {
-  const refreshToken = req.header("X-auth-refresh-token");
+  const refreshToken = req.body.token;
+
   if (!refreshToken) {
-    return res.status(400).send("User not authenticated");
+    return res.status(400).send("A valid refresh token is required");
   }
 
   jwt.verify(
@@ -15,7 +16,7 @@ router.post("/", (req, res) => {
     process.env.REFRESH_TOKEN_SECRET,
     async (err, user) => {
       if (err) {
-        return res.status(400).send("User not authenticated");
+        return res.status(400).send("Invalid Refresh Token");
       }
 
       const isValidRefreshToken = await Token.findOne({ token: refreshToken });
@@ -25,7 +26,7 @@ router.post("/", (req, res) => {
         const token = currentUser.generateAuthToken();
         return res.status(201).send(token);
       } else {
-        return res.status(401).send("Invalid refresh token");
+        return res.status(401).send("Refresh token has expired");
       }
     }
   );

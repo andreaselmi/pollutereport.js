@@ -8,7 +8,7 @@ const tokenSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    expires: "7d",
+    expires: process.env.JWT_REFRESH_TOKEN_TIME,
     default: Date.now,
   },
 });

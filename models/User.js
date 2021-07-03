@@ -49,7 +49,7 @@ userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     { _id: this._id, isAdmin: this.isAdmin },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "10m" }
+    { expiresIn: process.env.JWT_ACCESS_TOKEN_TIME }
   );
   return token;
 };
@@ -58,7 +58,7 @@ userSchema.methods.generateRefreshToken = function () {
   const token = jwt.sign(
     { _id: this._id, isAdmin: this.isAdmin },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: process.env.JWT_REFRESH_TOKEN_TIME }
   );
   return token;
 };
