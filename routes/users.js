@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
 
 const { User, userValidator } = require("../models/User");
+const Token = require("../models/Token");
 
 //get all users
 router.get("/", async (req, res) => {
@@ -36,6 +37,11 @@ router.post("/", async (req, res) => {
   await user.save();
   const token = user.generateAuthToken();
   const refreshToken = user.generateRefreshToken();
+
+  const storedToken = await new Token({
+    token: refreshToken,
+  });
+  await storedToken.save();
 
   res.status(200).send({
     email: user.email,

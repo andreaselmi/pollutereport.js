@@ -54,7 +54,6 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-//TODO refresh token
 userSchema.methods.generateRefreshToken = function () {
   const token = jwt.sign(
     { _id: this._id, isAdmin: this.isAdmin },

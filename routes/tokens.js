@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const { User } = require("../models/User");
+const Token = require("../models/Token");
 
 router.post("/", (req, res) => {
   const refreshToken = req.body.token;
@@ -17,10 +18,15 @@ router.post("/", (req, res) => {
         return res.status(400).send("User not authenticated");
       }
 
-      const currentUser = await User.findOne({ _id: user._id });
-
-      const token = currentUser.generateAuthToken();
-      return res.status(201).send(token);
+      const isValidRefreshToken = await Token.findOne({ token: refreshToken });
+      if (isValidRefreshToken) {
+        const currentUser = await User.findOne({ _id: user._id });
+        //TODO verificare correttezza
+        const token = currentUser.generateAuthToken();
+        return res.status(201).send(token);
+      } else {
+        return res.status(401).send("Invalid refresh token");
+      }
     }
   );
 });

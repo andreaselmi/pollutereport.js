@@ -11,7 +11,6 @@ module.exports = () => {
         useFindAndModify: false,
         useCreateIndex: true,
       });
-      //TODO change name db
       console.log(`Connected to mongoDB...`);
     } catch (error) {
       console.log("Failed to connect to mongodb", error);
