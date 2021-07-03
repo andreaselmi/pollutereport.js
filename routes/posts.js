@@ -16,8 +16,9 @@ router.get("/", async (req, res) => {
       res.status(500).send("Something goes wrong");
     }
   } else if (req.query.city) {
-    //TODO migliorare la query con maiuscole e minuscole
-    const posts = await Post.find({ "address.city": req.query.city });
+    const posts = await Post.find({
+      "address.city": new RegExp("^" + req.query.city + "$", "i"),
+    });
 
     if (posts.length === 0) {
       return res.status(404).send("There are no reports in this city");

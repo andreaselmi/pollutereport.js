@@ -5,7 +5,7 @@ const { User } = require("../models/User");
 const Token = require("../models/Token");
 
 router.post("/", (req, res) => {
-  const refreshToken = req.body.token;
+  const refreshToken = req.header("X-auth-refresh-token");
   if (!refreshToken) {
     return res.status(400).send("User not authenticated");
   }
