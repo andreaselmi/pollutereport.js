@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const Joi = require("joi");
 
 const { User } = require("../models/User");
+const Token = require("../models/Token");
 
 const schema = Joi.object({
   email: Joi.string().max(255).email().required(),
@@ -21,9 +22,17 @@ router.post("/", async (req, res) => {
   if (!validPassword) return res.status(400).send("Invalid email or password");
 
   const token = user.generateAuthToken();
-  //TODO send refresh token
-  // const refreshToken = user.generateRefreshToken();
-  res.send(token);
+  // TODO send refresh token
+  const refreshToken = user.generateRefreshToken();
+  const storedToken = await new Token({
+    token: refreshToken,
+  });
+  await storedToken.save();
+
+  res.send({
+    token,
+    refreshToken,
+  });
 });
 
 module.exports = router;

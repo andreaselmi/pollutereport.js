@@ -5,7 +5,7 @@ const app = express();
 const users = require("./routes/users");
 const auth = require("./routes/auth");
 const posts = require("./routes/posts");
-const token = require("./routes/token");
+const tokens = require("./routes/tokens");
 require("./db")();
 const cors = require("cors");
 
@@ -15,7 +15,7 @@ app.use(helmet());
 app.use("/users", users);
 app.use("/auth", auth);
 app.use("/posts", posts);
-app.use("/token", token);
+app.use("/token", tokens);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
