@@ -5,7 +5,7 @@ const app = express();
 const users = require("./routes/users");
 const auth = require("./routes/auth");
 const posts = require("./routes/posts");
-const tokens = require("./routes/tokens");
+const token = require("./routes/token");
 require("./helpers/db")();
 const cors = require("cors");
 const error = require("./middleware/error");
@@ -17,7 +17,7 @@ app.use(helmet());
 app.use("/users", users);
 app.use("/auth", auth);
 app.use("/posts", posts);
-app.use("/token", tokens);
+app.use("/token", token);
 app.use(error);
 
 process.on("unhandledRejection", (err) => {
