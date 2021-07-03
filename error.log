@@ -1,0 +1,2 @@
+{"message":"Parameter \"filter\" to findOne() must be an object, got ciao","level":"error","service":"user-service"}
+{"message":"Parameter \"filter\" to findOne() must be an object, got ciao","level":"error","service":"user-service"}

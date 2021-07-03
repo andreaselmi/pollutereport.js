@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const logger = require("./logger");
 
 module.exports = () => {
   const db = process.env.DB;
@@ -11,9 +12,9 @@ module.exports = () => {
         useFindAndModify: false,
         useCreateIndex: true,
       });
-      console.log(`Connected to mongoDB...`);
+      logger.log("info", `Connected to mongoDB...`);
     } catch (error) {
-      console.log("Failed to connect to mongodb", error);
+      logger.log("error", error);
     }
   };
 
