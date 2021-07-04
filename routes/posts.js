@@ -54,7 +54,6 @@ router.post("/", [auth, upload.single("image")], async (req, res) => {
 
 //Delete post
 router.delete("/:id", [auth, validateObjId], async (req, res) => {
-  // TODO error handling all await status
   const post = await Post.findById(req.params.id);
   if (!post) return res.status(404).send("Post not found");
 
