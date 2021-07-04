@@ -51,22 +51,4 @@ router.post("/", async (req, res) => {
   });
 });
 
-//modify user
-router.put("/:id", auth, async (req, res) => {
-  const { error } = userValidator.validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  if (req.params.id !== req.user._id && !user.isAdmin) {
-    return res.status(401).send("You are not authorized to edit this account");
-  }
-
-  const user = await User.findByIdAndUpdate(req.user._id, {
-    $set: req.body,
-  });
-  res.status(200).send({
-    email: user.email,
-    id: user._id,
-  });
-});
-
 module.exports = router;
