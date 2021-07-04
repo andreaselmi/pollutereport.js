@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+const _ = require("lodash");
 
 const { User } = require("../models/User");
 const Token = require("../models/Token");
@@ -30,6 +31,7 @@ router.post("/", async (req, res, next) => {
   await storedToken.save();
 
   res.status(200).send({
+    data: _.pick(user, ["_id", "email", "firstName", "lastName"]),
     token,
     refreshToken,
   });

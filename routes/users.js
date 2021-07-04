@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
+const _ = require("lodash");
 
 const { User, userValidator } = require("../models/User");
 const Token = require("../models/Token");
@@ -44,8 +45,7 @@ router.post("/", async (req, res) => {
   await storedToken.save();
 
   res.status(200).send({
-    email: user.email,
-    id: user._id,
+    data: _.pick(user, ["_id", "email", "firstName", "lastName"]),
     token,
     refreshToken,
   });
