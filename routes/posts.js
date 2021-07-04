@@ -6,15 +6,10 @@ const upload = require("../middleware/uploadImg");
 const { Post, postValidator } = require("../models/Post");
 const { User } = require("../models/User");
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   if (Object.keys(req.query).length === 0) {
-    try {
-      const posts = await Post.find().populate("author");
-      res.send(posts);
-    } catch (error) {
-      //TODO error handler
-      res.status(500).send("Something goes wrong");
-    }
+    const posts = await Post.find().populate("author");
+    res.send(posts);
   } else if (req.query.city) {
     const posts = await Post.find({
       "address.city": new RegExp("^" + req.query.city + "$", "i"),
@@ -52,15 +47,9 @@ router.post("/", [auth, upload.single("image")], async (req, res) => {
     image: req.file.path,
   });
 
-  try {
-    post = await post.save();
-    await user.updateOne({ $push: { posts: { _id: post._id } } });
-    res.status(200).send(post);
-  } catch (error) {
-    //TODO error handler
-    res.status(500).send("Something goes wrong");
-    console.log(error);
-  }
+  post = await post.save();
+  await user.updateOne({ $push: { posts: { _id: post._id } } });
+  res.status(200).send(post);
 });
 
 //Delete post
@@ -73,17 +62,11 @@ router.delete("/:id", [auth, validateObjId], async (req, res) => {
   if (String(post.author) !== String(req.user._id) && !req.user.isAdmin)
     return res.status(401).send("You are not authorized to delete this post");
 
-  try {
-    await User.findByIdAndUpdate(post.author, {
-      $pull: { posts: { _id: post._id } },
-    });
-    await post.remove();
-    res.send(post);
-  } catch (error) {
-    //TODO error handler
-    console.log(error);
-    res.status(500).send("Something goes wrong");
-  }
+  await User.findByIdAndUpdate(post.author, {
+    $pull: { posts: { _id: post._id } },
+  });
+  await post.remove();
+  res.send(post);
 });
 
 //Update post
@@ -99,16 +82,11 @@ router.put("/:id", [auth, validateObjId], async (req, res) => {
   const { error } = postValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  try {
-    await post.updateOne({
-      $set: req.body,
-    });
+  await post.updateOne({
+    $set: req.body,
+  });
 
-    res.status(200).send(post);
-  } catch (error) {
-    //TODO
-    res.status(500).send("Try again");
-  }
+  res.status(200).send(post);
 });
 
 module.exports = router;

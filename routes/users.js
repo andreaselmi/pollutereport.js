@@ -62,18 +62,13 @@ router.put("/:id", auth, async (req, res) => {
       .send("You are not authorized to modify this account");
   }
 
-  try {
-    const user = await User.findByIdAndUpdate(req.user._id, {
-      $set: req.body,
-    });
-    res.status(200).send({
-      email: user.email,
-      id: user._id,
-    });
-  } catch (error) {
-    //TODO
-    res.status(500).send("Try again");
-  }
+  const user = await User.findByIdAndUpdate(req.user._id, {
+    $set: req.body,
+  });
+  res.status(200).send({
+    email: user.email,
+    id: user._id,
+  });
 });
 
 //delete a user by id

@@ -1,3 +1,4 @@
+require("express-async-errors");
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 const express = require("express");
 const helmet = require("helmet");
@@ -37,5 +38,5 @@ if (!process.env.ACCESS_TOKEN_SECRET && !process.env.REFRESH_TOKEN_SECRET) {
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`Server is listening on port ${port}.....`);
+  logger.log("info", `Server is listening on port ${port}.....`);
 });
