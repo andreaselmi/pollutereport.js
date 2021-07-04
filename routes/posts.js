@@ -2,6 +2,7 @@ const router = require("express").Router();
 const auth = require("../middleware/auth");
 const validateObjId = require("../middleware/validateObjId");
 const upload = require("../middleware/uploadImg");
+const mongoose = require("mongoose");
 
 const { Post, postValidator } = require("../models/Post");
 const { User } = require("../models/User");
@@ -23,9 +24,9 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/search", async (req, res, next) => {
+router.get("/search", validateObjId, async (req, res, next) => {
   if (Object.keys(req.query).length === 0) {
-    res.status(400).send("City name is required");
+    res.status(400).send("Query is required");
   } else if (req.query.city) {
     const posts = await Post.find({
       "address.city": new RegExp("^" + req.query.city + "$", "i"),
@@ -36,9 +37,28 @@ router.get("/search", async (req, res, next) => {
     }
 
     res.status(200).send(posts);
+  } else if (req.query.authorId) {
+    if (!mongoose.Types.ObjectId.isValid(req.query.authorId)) {
+      return res.status(404).send("Invalid ID");
+    }
+
+    const posts = await Post.find({ author: req.query.authorId });
+    if (posts.length === 0) {
+      return res.status(404).send("There are no reports for this author");
+    }
+
+    res.status(200).send(posts);
   } else {
-    res.status(400).send("'city' is the only valid query");
+    res.status(400).send("Please insert a valid query");
   }
+});
+
+router.get("/:id", validateObjId, async (req, res) => {
+  const post = await Post.findById(req.params.id);
+
+  if (!post) return res.status(404).send("No report found");
+
+  return res.status(200).send(post);
 });
 
 //create new post
