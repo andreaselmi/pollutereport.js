@@ -7,27 +7,41 @@ const mongoose = require("mongoose");
 const { Post, postValidator } = require("../models/Post");
 const { User } = require("../models/User");
 
+//Get all posts (default 10 by 10 from page 1)
 router.get("/", async (req, res, next) => {
-  if (Object.keys(req.query).length === 0) {
-    const posts = await Post.find().populate("author").limit(4);
-    return res.status(200).send(posts);
-  }
+  const limitPosts = Number(req.query.pageLimit) || 10;
+  const pageNumber = Number(req.query.pageNumber) || 1;
 
-  if (req.query.pageNumber) {
-    const posts = await Post.find()
-      .populate("author")
-      .skip((req.query.pageNumber - 1) * 4)
-      .limit(4);
-    return res.status(200).send(posts);
-  } else {
-    res.status(400).send("Invalid query");
-  }
+  const posts = await Post.find()
+    .populate("author")
+    .skip((pageNumber - 1) * limitPosts)
+    .limit(limitPosts);
+  return res.status(200).send(posts);
 });
 
+//search post by city or authorId or both
 router.get("/search", validateObjId, async (req, res, next) => {
   if (Object.keys(req.query).length === 0) {
-    res.status(400).send("Query is required");
-  } else if (req.query.city) {
+    return res.status(400).send("Nothing to search");
+  }
+
+  if (req.query.city && req.query.authorId) {
+    if (!mongoose.Types.ObjectId.isValid(req.query.authorId)) {
+      return res.status(404).send("Invalid Author ID");
+    }
+    const posts = await Post.find({
+      "address.city": new RegExp("^" + req.query.city + "$", "i"),
+      author: req.query.authorId,
+    });
+
+    if (posts.length === 0) {
+      return res.status(404).send("No Results");
+    }
+
+    return res.status(200).send(posts);
+  }
+
+  if (req.query.city) {
     const posts = await Post.find({
       "address.city": new RegExp("^" + req.query.city + "$", "i"),
     });
@@ -36,8 +50,10 @@ router.get("/search", validateObjId, async (req, res, next) => {
       return res.status(404).send("There are no reports in this city");
     }
 
-    res.status(200).send(posts);
-  } else if (req.query.authorId) {
+    return res.status(200).send(posts);
+  }
+
+  if (req.query.authorId) {
     if (!mongoose.Types.ObjectId.isValid(req.query.authorId)) {
       return res.status(404).send("Invalid ID");
     }
@@ -47,12 +63,12 @@ router.get("/search", validateObjId, async (req, res, next) => {
       return res.status(404).send("There are no reports for this author");
     }
 
-    res.status(200).send(posts);
-  } else {
-    res.status(400).send("Please insert a valid query");
+    return res.status(200).send(posts);
   }
+  return res.status(400).send("Please insert a valid query");
 });
 
+//get post by id
 router.get("/:id", validateObjId, async (req, res) => {
   const post = await Post.findById(req.params.id);
 
