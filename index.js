@@ -25,11 +25,6 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-process.on("uncaughtException", (err) => {
-  logger.error(err);
-  process.exit(1);
-});
-
 if (!process.env.ACCESS_TOKEN_SECRET && !process.env.REFRESH_TOKEN_SECRET) {
   throw new Error(
     "FATAL ERROR: jwt keys for access token and refresh token are not defined."

@@ -1,0 +1,23 @@
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
+{"service":"user-service","metadata":"MongooseServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017\n    at Function.Model.$wrapCallback (/Users/andreaselmi/Desktop/progetti/progetto node js/pollutereport/node_modules/mongoose/lib/model.js:4883:32)\n    at /Users/andreaselmi/Desktop/progetti/progetto node js/pollutereport/node_modules/mongoose/lib/query.js:4490:21\n    at /Users/andreaselmi/Desktop/progetti/progetto node js/pollutereport/node_modules/mongoose/lib/helpers/promiseOrCallback.js:32:5\n    at new Promise (<anonymous>)\n    at promiseOrCallback (/Users/andreaselmi/Desktop/progetti/progetto node js/pollutereport/node_modules/mongoose/lib/helpers/promiseOrCallback.js:31:10)\n    at model.Query.exec (/Users/andreaselmi/Desktop/progetti/progetto node js/pollutereport/node_modules/mongoose/lib/query.js:4489:10)\n    at model.Query.Query.then (/Users/andreaselmi/Desktop/progetti/progetto node js/pollutereport/node_modules/mongoose/lib/query.js:4572:15)\n    at processTicksAndRejections (internal/process/task_queues.js:95:5)","level":"error","message":"connect ECONNREFUSED 127.0.0.1:27017"}
+{"level":"info","message":"Server is listening on port 3000....."}
+{"level":"info","message":"Connected to mongoDB..."}
