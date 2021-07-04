@@ -21,8 +21,7 @@ app.use("/token", token);
 app.use(error);
 
 process.on("unhandledRejection", (err) => {
-  logger.error(err);
-  process.exit(1);
+  throw err;
 });
 
 process.on("uncaughtException", (err) => {
