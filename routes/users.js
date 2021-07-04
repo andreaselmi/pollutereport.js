@@ -57,9 +57,7 @@ router.put("/:id", auth, async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   if (req.params.id !== req.user._id && !user.isAdmin) {
-    return res
-      .status(401)
-      .send("You are not authorized to modify this account");
+    return res.status(401).send("You are not authorized to edit this account");
   }
 
   const user = await User.findByIdAndUpdate(req.user._id, {
@@ -70,9 +68,5 @@ router.put("/:id", auth, async (req, res) => {
     id: user._id,
   });
 });
-
-//delete a user by id
-//TODO
-// router.delete("/:id", (req, res) => {});
 
 module.exports = router;

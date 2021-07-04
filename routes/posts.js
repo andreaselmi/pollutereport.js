@@ -8,8 +8,24 @@ const { User } = require("../models/User");
 
 router.get("/", async (req, res, next) => {
   if (Object.keys(req.query).length === 0) {
-    const posts = await Post.find().populate("author");
-    res.send(posts);
+    const posts = await Post.find().populate("author").limit(4);
+    return res.status(200).send(posts);
+  }
+
+  if (req.query.pageNumber) {
+    const posts = await Post.find()
+      .populate("author")
+      .skip((req.query.pageNumber - 1) * 4)
+      .limit(4);
+    return res.status(200).send(posts);
+  } else {
+    res.status(400).send("Invalid query");
+  }
+});
+
+router.get("/search", async (req, res, next) => {
+  if (Object.keys(req.query).length === 0) {
+    res.status(400).send("City name is required");
   } else if (req.query.city) {
     const posts = await Post.find({
       "address.city": new RegExp("^" + req.query.city + "$", "i"),
@@ -21,7 +37,7 @@ router.get("/", async (req, res, next) => {
 
     res.status(200).send(posts);
   } else {
-    res.status(400).send("You can only search with the name of a city");
+    res.status(400).send("'city' is the only valid query");
   }
 });
 
@@ -57,7 +73,6 @@ router.delete("/:id", [auth, validateObjId], async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (!post) return res.status(404).send("Post not found");
 
-  //TODO migliorare
   if (String(post.author) !== String(req.user._id) && !req.user.isAdmin)
     return res.status(401).send("You are not authorized to delete this post");
 
@@ -73,9 +88,8 @@ router.put("/:id", [auth, validateObjId], async (req, res) => {
   const post = await Post.findById(req.params.id);
   if (!post) return res.status(404).send("Post not found");
 
-  // TODO migliorare
   if (String(post.author) !== String(req.user._id)) {
-    return res.status(401).send("You are not authorized to modify this post");
+    return res.status(401).send("You are not authorized to edit this post");
   }
 
   const { error } = postValidator.validate(req.body);
