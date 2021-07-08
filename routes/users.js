@@ -1,3 +1,4 @@
+const { unlink } = require("fs/promises");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
@@ -5,6 +6,8 @@ const _ = require("lodash");
 
 const { User, userValidator } = require("../models/User");
 const Token = require("../models/Token");
+const upload = require("../middleware/uploadImg");
+const { findById, findOne } = require("../models/Token");
 
 //get all users
 router.get("/", async (req, res) => {
@@ -49,6 +52,26 @@ router.post("/", async (req, res) => {
     token,
     refreshToken,
   });
+});
+
+//add or update profile image
+//TODO add profile image routes
+router.put("/me", [auth, upload.single("image")], async (req, res) => {
+  if (!req.file) return res.status(400).send("You must send an image");
+
+  const user = await User.findById(req.user._id);
+
+  if (user.profileImage) {
+    await unlink(user.profileImage);
+    console.log("successfully deleted old image");
+  }
+
+  user.profileImage = req.file.path;
+  await user.save();
+
+  res
+    .status(200)
+    .send(_.pick(user, ["firstName", "lastName", "profileImage", "email"]));
 });
 
 module.exports = router;
